@@ -5,6 +5,9 @@ namespace Calculator {
   type FormulaElement = Operator | OperandType | Bracket;
   type HydratedFormulaEl = number | Operator | Bracket;
 
+  const isOperator = (element: HydratedFormulaEl) =>
+    element === "*" || element === "/" || element === "+" || element === "-";
+
   const replaceOperands = (
     formula: FormulaElement[],
     amounts: number[],
@@ -36,9 +39,16 @@ namespace Calculator {
         newFormula[index] === operators[0] ||
         newFormula[index] === operators[1]
       ) {
-        const num1 = newFormula[index - 1] as number;
-        const num2 = newFormula[index + 1] as number;
-        const operator = newFormula[index] as Operator;
+        const num1 = newFormula[index - 1];
+        const num2 = newFormula[index + 1];
+        if (typeof num1 !== "number" || typeof num2 !== "number") {
+          throw new Error("Invalid formula");
+        }
+        const operator = newFormula[index];
+        if (!isOperator(operator)) {
+          throw new Error("Invalid formula");
+        }
+
         const result = combine2Numbers(num1, operator, num2);
         newFormula.splice(index - 1, 3, result);
       } else {
