@@ -5,7 +5,6 @@ namespace Calculator {
   type FormulaElement = Operator | OperandType | Bracket;
   type HydratedFormulaEl = number | Operator | Bracket;
 
-  // Replace the amounts and coeffs arrays with actual values
   const replaceOperands = (
     formula: FormulaElement[],
     amounts: number[],
@@ -49,7 +48,7 @@ namespace Calculator {
     return newFormula;
   };
 
-  const process = (formula: HydratedFormulaEl[]) =>
+  const calculate = (formula: HydratedFormulaEl[]) =>
     evaluate(evaluate(formula, ["*", "/"]), ["+", "-"]);
 
   const clearBrackets = (formula: HydratedFormulaEl[]) => {
@@ -61,12 +60,14 @@ namespace Calculator {
         stack.push("(");
       } else if (formula[index] === ")") {
         let innerFormula: HydratedFormulaEl[] = [];
-        let bracket = stack.pop();
-        while (bracket !== "(") {
-          innerFormula.unshift(bracket as number | Operator);
-          bracket = stack.pop();
+        let element = stack.pop();
+
+        while (element !== "(") {
+          if (element === undefined) throw new Error("Invalid brackets");
+          innerFormula.unshift(element);
+          element = stack.pop();
         }
-        stack.push(...process(innerFormula));
+        stack.push(...calculate(innerFormula));
       } else {
         stack.push(formula[index]);
       }
@@ -89,7 +90,7 @@ namespace Calculator {
     const flatFormula = clearBrackets(hydratedFormula);
     console.log("Flat", flatFormula.join(" "));
 
-    const result = process(flatFormula)[0];
+    const result = calculate(flatFormula)[0];
     console.log("Result", result);
 
     return result;
