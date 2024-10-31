@@ -95,6 +95,7 @@ namespace Calculator {
     return result;
   };
 
+  // TESTS
   solve(["amount", "*", "coeff"], [100], [2]); // 200
   solve(["amount", "/", "amount", "*", "coeff"], [1000, 5], [3]); // 600
   solve(
