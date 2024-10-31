@@ -68,6 +68,18 @@ namespace Calculator {
   const calculate = (formula: FlatNumberFormula) =>
     calculateHalf(calculateHalf(formula, ["*", "/"]), ["+", "-"]);
 
+  const verifyFlatFormula = (formula: NumberFormula) => {
+    const flatFormula: FlatNumberFormula = [];
+    formula.forEach((element) => {
+      if (element === "(" || element === ")") {
+        throw new Error("Invalid brackets");
+      }
+      flatFormula.push(element);
+    });
+
+    return flatFormula;
+  };
+
   const clearBrackets = (formula: NumberFormula) => {
     const stack: NumberFormula = [];
 
@@ -89,11 +101,7 @@ namespace Calculator {
       }
     }
 
-    const flatGuaranteedFormula: FlatNumberFormula = stack.filter(
-      (element) => element !== "(" && element !== ")"
-    );
-
-    return flatGuaranteedFormula;
+    return verifyFlatFormula(stack);
   };
 
   const solve = (formula: Formula, amounts: number[], coeffs: number[]) => {
