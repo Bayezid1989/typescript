@@ -3,10 +3,10 @@ namespace Calculator {
   type Bracket = "(" | ")";
   type Operand = "amount" | "coeff";
   type Formula = (Operand | Operator | Bracket)[];
-  type HydratedFormula = (number | Operator | Bracket)[];
-  type FlatFormula = (number | Operator)[];
+  type NumberFormula = (number | Operator | Bracket)[];
+  type FlatNumberFormula = (number | Operator)[];
 
-  const isOperator = (element: HydratedFormula[number]) =>
+  const isOperator = (element: NumberFormula[number]) =>
     element === "*" || element === "/" || element === "+" || element === "-";
 
   const extractNumber = (numbers: number[]) => {
@@ -19,7 +19,7 @@ namespace Calculator {
     formula: Formula,
     amounts: number[],
     coeffs: number[]
-  ) =>
+  ): NumberFormula =>
     formula.map((element) => {
       if (element === "amount") return extractNumber(amounts);
       if (element === "coeff") return extractNumber(coeffs);
@@ -34,7 +34,10 @@ namespace Calculator {
     throw new Error("Invalid operator");
   };
 
-  const operate = (formula: FlatFormula, operators: [Operator, Operator]) => {
+  const operate = (
+    formula: FlatNumberFormula,
+    operators: [Operator, Operator]
+  ) => {
     const newFormula = [...formula];
     let index = 0;
 
@@ -62,16 +65,16 @@ namespace Calculator {
     return newFormula;
   };
 
-  const calculate = (formula: FlatFormula) =>
+  const calculate = (formula: FlatNumberFormula) =>
     operate(operate(formula, ["*", "/"]), ["+", "-"]);
 
-  const clearBrackets = (formula: HydratedFormula) => {
-    const stack: HydratedFormula = [];
+  const clearBrackets = (formula: NumberFormula) => {
+    const stack: NumberFormula = [];
     let index = 0;
 
     while (index < formula.length) {
       if (formula[index] === ")") {
-        let flatFormula: FlatFormula = [];
+        let flatFormula: FlatNumberFormula = [];
         let element = stack.pop();
 
         while (element !== "(") {
@@ -88,14 +91,14 @@ namespace Calculator {
       index++;
     }
 
-    return stack as FlatFormula;
+    return stack as FlatNumberFormula;
   };
 
   const solve = (formula: Formula, amounts: number[], coeffs: number[]) => {
     console.log("Original", formula.join(" "));
 
     const hydratedFormula = replaceOperands(formula, amounts, coeffs);
-    console.log("Hydrated", hydratedFormula.join(" "));
+    console.log("Number", hydratedFormula.join(" "));
 
     const flatFormula = clearBrackets(hydratedFormula);
     console.log("Flat", flatFormula.join(" "));
