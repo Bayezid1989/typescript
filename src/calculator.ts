@@ -8,14 +8,20 @@ namespace Calculator {
   const isOperator = (element: HydratedFormulaEl) =>
     element === "*" || element === "/" || element === "+" || element === "-";
 
+  const extractNumber = (numbers: number[]) => {
+    const num = numbers.shift();
+    if (typeof num !== "number") throw new Error("Operand missing");
+    return num;
+  };
+
   const replaceOperands = (
     formula: FormulaElement[],
     amounts: number[],
     coeffs: number[]
   ) =>
     formula.map((element) => {
-      if (element === "amount") return amounts.shift() as number;
-      if (element === "coeff") return coeffs.shift() as number;
+      if (element === "amount") return extractNumber(amounts);
+      if (element === "coeff") return extractNumber(coeffs);
       return element;
     });
 
