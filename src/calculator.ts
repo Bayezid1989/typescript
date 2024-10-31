@@ -6,7 +6,7 @@ namespace Calculator {
   type HydratedFormulaEl = number | Operator | Bracket;
 
   // Replace the amounts and coeffs arrays with actual values
-  const hydrateFormula = (
+  const replaceOperands = (
     formula: FormulaElement[],
     amounts: number[],
     coeffs: number[]
@@ -83,7 +83,7 @@ namespace Calculator {
   ) => {
     console.log("Original", formula.join(" "));
 
-    const hydratedFormula = hydrateFormula(formula, amounts, coeffs);
+    const hydratedFormula = replaceOperands(formula, amounts, coeffs);
     console.log("Hydrated", hydratedFormula.join(" "));
 
     const flatFormula = clearBrackets(hydratedFormula);
