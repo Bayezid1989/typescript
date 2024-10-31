@@ -26,7 +26,7 @@ namespace Calculator {
       return element;
     });
 
-  const combine2Numbers = (num1: number, operator: Operator, num2: number) => {
+  const operate = (num1: number, operator: Operator, num2: number) => {
     if (operator === "*") return num1 * num2;
     if (operator === "/") return num1 / num2;
     if (operator === "+") return num1 + num2;
@@ -34,7 +34,7 @@ namespace Calculator {
     throw new Error("Invalid operator");
   };
 
-  const operate = (
+  const calculateHalf = (
     formula: FlatNumberFormula,
     operators: [Operator, Operator]
   ) => {
@@ -56,7 +56,7 @@ namespace Calculator {
           throw new Error("Invalid formula");
         }
 
-        const result = combine2Numbers(num1, operator, num2);
+        const result = operate(num1, operator, num2);
         newFormula.splice(index - 1, 3, result);
       } else {
         index++;
@@ -66,14 +66,13 @@ namespace Calculator {
   };
 
   const calculate = (formula: FlatNumberFormula) =>
-    operate(operate(formula, ["*", "/"]), ["+", "-"]);
+    calculateHalf(calculateHalf(formula, ["*", "/"]), ["+", "-"]);
 
   const clearBrackets = (formula: NumberFormula) => {
     const stack: NumberFormula = [];
-    let index = 0;
 
-    while (index < formula.length) {
-      if (formula[index] === ")") {
+    for (let i = 0; i < formula.length; i++) {
+      if (formula[i] === ")") {
         let flatFormula: FlatNumberFormula = [];
         let element = stack.pop();
 
@@ -86,12 +85,15 @@ namespace Calculator {
         }
         stack.push(...calculate(flatFormula));
       } else {
-        stack.push(formula[index]);
+        stack.push(formula[i]);
       }
-      index++;
     }
 
-    return stack as FlatNumberFormula;
+    const flatGuaranteedFormula: FlatNumberFormula = stack.filter(
+      (element) => element !== "(" && element !== ")"
+    );
+
+    return flatGuaranteedFormula;
   };
 
   const solve = (formula: Formula, amounts: number[], coeffs: number[]) => {
