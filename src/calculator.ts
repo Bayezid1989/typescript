@@ -1,11 +1,12 @@
 namespace Calculator {
   type Operator = "*" | "/" | "+" | "-";
   type Bracket = "(" | ")";
-  type OperandType = "amount" | "coeff";
-  type FormulaElement = Operator | OperandType | Bracket;
-  type HydratedFormulaEl = number | Operator | Bracket;
+  type Operand = "amount" | "coeff";
+  type Formula = (Operand | Operator | Bracket)[];
+  type HydratedFormula = (number | Operator | Bracket)[];
+  type FlatFormula = (number | Operator)[];
 
-  const isOperator = (element: HydratedFormulaEl) =>
+  const isOperator = (element: HydratedFormula[number]) =>
     element === "*" || element === "/" || element === "+" || element === "-";
 
   const extractNumber = (numbers: number[]) => {
@@ -15,7 +16,7 @@ namespace Calculator {
   };
 
   const replaceOperands = (
-    formula: FormulaElement[],
+    formula: Formula,
     amounts: number[],
     coeffs: number[]
   ) =>
@@ -33,10 +34,7 @@ namespace Calculator {
     throw new Error("Invalid operator");
   };
 
-  const operate = (
-    formula: HydratedFormulaEl[],
-    operators: [Operator, Operator]
-  ) => {
+  const operate = (formula: FlatFormula, operators: [Operator, Operator]) => {
     const newFormula = [...formula];
     let index = 0;
 
@@ -64,38 +62,36 @@ namespace Calculator {
     return newFormula;
   };
 
-  const calculate = (formula: HydratedFormulaEl[]) =>
+  const calculate = (formula: FlatFormula) =>
     operate(operate(formula, ["*", "/"]), ["+", "-"]);
 
-  const clearBrackets = (formula: HydratedFormulaEl[]) => {
-    const stack: HydratedFormulaEl[] = [];
+  const clearBrackets = (formula: HydratedFormula) => {
+    const stack: HydratedFormula = [];
     let index = 0;
 
     while (index < formula.length) {
       if (formula[index] === ")") {
-        let innerFormula: HydratedFormulaEl[] = [];
+        let flatFormula: FlatFormula = [];
         let element = stack.pop();
 
         while (element !== "(") {
-          if (element === undefined) throw new Error("Invalid brackets");
-          innerFormula.unshift(element);
+          if (element === undefined || element === ")") {
+            throw new Error("Invalid brackets");
+          }
+          flatFormula.unshift(element);
           element = stack.pop();
         }
-        stack.push(...calculate(innerFormula));
+        stack.push(...calculate(flatFormula));
       } else {
         stack.push(formula[index]);
       }
       index++;
     }
 
-    return stack;
+    return stack as FlatFormula;
   };
 
-  const solve = (
-    formula: FormulaElement[],
-    amounts: number[],
-    coeffs: number[]
-  ) => {
+  const solve = (formula: Formula, amounts: number[], coeffs: number[]) => {
     console.log("Original", formula.join(" "));
 
     const hydratedFormula = replaceOperands(formula, amounts, coeffs);
