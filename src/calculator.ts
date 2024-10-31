@@ -37,7 +37,7 @@ namespace Calculator {
     formula: HydratedFormulaEl[],
     operators: [Operator, Operator]
   ) => {
-    let newFormula = [...formula];
+    const newFormula = [...formula];
     let index = 0;
 
     while (index < newFormula.length) {
@@ -72,9 +72,7 @@ namespace Calculator {
     let index = 0;
 
     while (index < formula.length) {
-      if (formula[index] === "(") {
-        stack.push("(");
-      } else if (formula[index] === ")") {
+      if (formula[index] === ")") {
         let innerFormula: HydratedFormulaEl[] = [];
         let element = stack.pop();
 
