@@ -107,6 +107,7 @@ namespace Calculator {
   };
 
   // TESTS
+  solve(["amount"], [100], []); // Formula: 100 = 100
   solve(["amount", "*", "coeff"], [100], [2]); // 200
   solve(["amount", "/", "amount", "*", "coeff"], [1000, 5], [3]); // 600
   solve(
