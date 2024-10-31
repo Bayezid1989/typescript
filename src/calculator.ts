@@ -33,7 +33,7 @@ namespace Calculator {
     throw new Error("Invalid operator");
   };
 
-  const evaluate = (
+  const operate = (
     formula: HydratedFormulaEl[],
     operators: [Operator, Operator]
   ) => {
@@ -65,7 +65,7 @@ namespace Calculator {
   };
 
   const calculate = (formula: HydratedFormulaEl[]) =>
-    evaluate(evaluate(formula, ["*", "/"]), ["+", "-"]);
+    operate(operate(formula, ["*", "/"]), ["+", "-"]);
 
   const clearBrackets = (formula: HydratedFormulaEl[]) => {
     const stack: HydratedFormulaEl[] = [];
